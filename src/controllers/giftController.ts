@@ -8,12 +8,13 @@ export const createGift = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     // Get the template
     const template = await Template.findById(req.body.templateId);
     if (!template || !template.isActive) {
-      return next(new AppError("Template not found or inactive", 404));
+      next(new AppError("Template not found or inactive", 404));
+      return;
     }
 
     // Create the gift with template data and a default senderId
@@ -39,12 +40,13 @@ export const getGift = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const gift = await Gift.findById(req.params.id);
 
     if (!gift) {
-      return next(new AppError("Gift not found", 404));
+      next(new AppError("Gift not found", 404));
+      return;
     }
 
     // Check if gift is password protected
@@ -52,33 +54,42 @@ export const getGift = async (
       const password = req.headers["x-gift-password"];
 
       if (!password) {
-        return res.status(200).json({
+        res.status(200).json({
           status: "success",
           data: {
             _id: gift._id,
             hasPassword: true,
           },
         });
+        return;
+      }
+
+      if (!gift.password) {
+        next(new AppError("Gift password not set", 500));
+        return;
       }
 
       const isPasswordCorrect = await gift.checkPassword(
         password as string,
-        gift.password as string
+        gift.password
       );
 
       if (!isPasswordCorrect) {
-        return next(new AppError("Invalid password", 401));
+        next(new AppError("Invalid password", 401));
+        return;
       }
     }
 
     // Check if gift has expired
     if (gift.expiresAt && new Date(gift.expiresAt) < new Date()) {
-      return next(new AppError("This gift has expired", 410));
+      next(new AppError("This gift has expired", 410));
+      return;
     }
 
     // Check if gift is scheduled for future
     if (gift.scheduledFor && new Date(gift.scheduledFor) > new Date()) {
-      return next(new AppError("This gift is not available yet", 403));
+      next(new AppError("This gift is not available yet", 403));
+      return;
     }
 
     res.status(200).json({
@@ -95,7 +106,7 @@ export const markGiftAsOpened = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const gift = await Gift.findByIdAndUpdate(
       req.params.id,
@@ -104,7 +115,8 @@ export const markGiftAsOpened = async (
     );
 
     if (!gift) {
-      return next(new AppError("Gift not found", 404));
+      next(new AppError("Gift not found", 404));
+      return;
     }
 
     res.status(200).json({

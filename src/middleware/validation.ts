@@ -1,18 +1,19 @@
-import { body, param, validationResult } from "express-validator";
 import { Request, Response, NextFunction } from "express";
+import { body, param, validationResult, Meta } from "express-validator";
 
 export const validateRequest = (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): void => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({
+    res.status(400).json({
       status: "error",
       message: "Invalid input data",
       errors: errors.array(),
     });
+    return;
   }
   next();
 };
@@ -42,7 +43,7 @@ export const createGiftValidation = [
     .optional()
     .isISO8601()
     .withMessage("Invalid date format")
-    .custom((value) => {
+    .custom((value: string) => {
       const date = new Date(value);
       if (date < new Date()) {
         throw new Error("Scheduled date must be in the future");
@@ -53,22 +54,22 @@ export const createGiftValidation = [
     .optional()
     .isISO8601()
     .withMessage("Invalid date format")
-    .custom((value, { req }) => {
+    .custom((value: string, meta: Meta) => {
       const expiryDate = new Date(value);
-      const scheduledDate = req.body.scheduledFor
-        ? new Date(req.body.scheduledFor)
+      const scheduledDate = meta.req.body.scheduledFor
+        ? new Date(meta.req.body.scheduledFor)
         : new Date();
       if (expiryDate <= scheduledDate) {
         throw new Error("Expiry date must be after scheduled date");
       }
       return true;
     }),
-  validateRequest,
+  validateRequest
 ];
 
 export const getGiftValidation = [
   param("id").isMongoId().withMessage("Invalid gift ID format"),
-  validateRequest,
+  validateRequest
 ];
 
 export const createTemplateValidation = [
@@ -90,7 +91,7 @@ export const createTemplateValidation = [
       "poetic",
       "classic-romantic",
       "playful-tech",
-      "elegant",
+      "elegant"
     ])
     .withMessage("Invalid theme"),
   body("imageUrl")
@@ -98,5 +99,5 @@ export const createTemplateValidation = [
     .withMessage("Image URL is required")
     .isURL()
     .withMessage("Invalid image URL"),
-  validateRequest,
+  validateRequest
 ];

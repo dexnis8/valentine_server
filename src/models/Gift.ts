@@ -2,6 +2,23 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import { GiftTheme } from "./Template";
 
+// Define the interface for Gift document
+interface IGift extends mongoose.Document {
+  templateId: mongoose.Types.ObjectId;
+  senderId: string;
+  senderName: string;
+  customMessage?: string;
+  message: string;
+  theme: GiftTheme;
+  imageUrl: string;
+  scheduledFor?: Date;
+  isOpened: boolean;
+  expiresAt?: Date;
+  password?: string;
+  hasPassword: boolean;
+  checkPassword(candidatePassword: string, userPassword: string): Promise<boolean>;
+}
+
 const giftSchema = new mongoose.Schema(
   {
     templateId: {
@@ -83,4 +100,4 @@ giftSchema.index({ scheduledFor: 1 });
 giftSchema.index({ expiresAt: 1 });
 giftSchema.index({ createdAt: 1 });
 
-export const Gift = mongoose.model("Gift", giftSchema);
+export const Gift = mongoose.model<IGift>("Gift", giftSchema);
