@@ -16,18 +16,6 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "types": [
-      "node",
-      "express",
-      "cors",
-      "dotenv",
-      "express-rate-limit",
-      "express-mongo-sanitize",
-      "hpp",
-      "bcryptjs",
-      "helmet",
-      "jsonwebtoken"
-    ],
     "typeRoots": ["./node_modules/@types"],
     "sourceMap": true,
     "declaration": true,
