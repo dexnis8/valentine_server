@@ -31,10 +31,10 @@ router.get(
   getTemplate
 );
 router.get("/:id", giftViewLimiter, getGiftValidation, getGift);
+router.post("/", createGiftLimiter, createGiftValidation, createGift);
 
 // Protected routes (require API key)
 router.use(validateApiKey);
-router.post("/", createGiftLimiter, createGiftValidation, createGift);
 router.patch("/:id", updateGiftValidation, updateGift);
 router.delete("/:id", deleteGiftValidation, deleteGift);
 
