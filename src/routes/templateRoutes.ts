@@ -6,7 +6,7 @@ import {
   updateTemplate,
   deleteTemplate,
 } from "../controllers/templateController";
-import { validateApiKey } from "../middleware/security";
+import { validateApiKey, templateViewLimiter } from "../middleware/security";
 import {
   createTemplateValidation,
   getGiftValidation,
@@ -14,9 +14,9 @@ import {
 
 const router = express.Router();
 
-// Public routes
-router.get("/", getTemplates);
-router.get("/:id", getGiftValidation, getTemplate);
+// Public routes with rate limiting
+router.get("/", templateViewLimiter, getTemplates);
+router.get("/:id", templateViewLimiter, getGiftValidation, getTemplate);
 
 // Protected routes (require API key)
 router.use(validateApiKey);

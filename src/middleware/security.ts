@@ -2,21 +2,34 @@ import rateLimit from "express-rate-limit";
 import mongoSanitize from "express-mongo-sanitize";
 import hpp from "hpp";
 import { Request, Response, NextFunction, RequestHandler } from "express";
+import { sanitize } from "express-mongo-sanitize";
 
-// Rate limiting configuration
-export const limiter = rateLimit({
+// Rate limiter for template viewing - 500 views per 15 minutes per IP
+export const templateViewLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
-  message: "Too many requests from this IP, please try again later.",
+  max: 500, // 500 requests per windowMs
+  message:
+    "Too many template views from this IP, please try again after 15 minutes",
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-// Stricter rate limit for gift creation
+// Rate limiter for gift viewing - 300 views per 15 minutes per IP
+export const giftViewLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 300, // 300 requests per windowMs
+  message:
+    "Too many gift views from this IP, please try again after 15 minutes",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Rate limiter for gift creation - 50 creations per hour per IP
 export const createGiftLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 10, // Limit each IP to 10 gift creations per hour
-  message: "Gift creation limit reached, please try again later.",
+  max: 50, // 50 requests per windowMs
+  message:
+    "Too many gift creations from this IP, please try again after an hour",
   standardHeaders: true,
   legacyHeaders: false,
 });

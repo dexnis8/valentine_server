@@ -2,20 +2,40 @@ import express from "express";
 import {
   createGift,
   getGift,
-  markGiftAsOpened,
+  getTemplate,
+  getTemplates,
+  updateGift,
+  deleteGift,
 } from "../controllers/giftController";
-import { createGiftLimiter } from "../middleware/security";
 import {
   createGiftValidation,
   getGiftValidation,
+  updateGiftValidation,
+  deleteGiftValidation,
 } from "../middleware/validation";
+import {
+  validateApiKey,
+  createGiftLimiter,
+  templateViewLimiter,
+  giftViewLimiter,
+} from "../middleware/security";
 
 const router = express.Router();
 
-router.route("/").post(createGiftLimiter, createGiftValidation, createGift);
+// Public routes
+router.get("/templates", templateViewLimiter, getTemplates);
+router.get(
+  "/templates/:id",
+  templateViewLimiter,
+  getGiftValidation,
+  getTemplate
+);
+router.get("/:id", giftViewLimiter, getGiftValidation, getGift);
 
-router.route("/:id").get(getGiftValidation, getGift);
-
-router.route("/:id/open").patch(getGiftValidation, markGiftAsOpened);
+// Protected routes (require API key)
+router.use(validateApiKey);
+router.post("/", createGiftLimiter, createGiftValidation, createGift);
+router.patch("/:id", updateGiftValidation, updateGift);
+router.delete("/:id", deleteGiftValidation, deleteGift);
 
 export default router;

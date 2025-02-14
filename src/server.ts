@@ -44,9 +44,6 @@ app.use(
   })
 );
 
-// Apply rate limiting
-app.use(limiter);
-
 // CORS configuration
 app.use(
   cors({
