@@ -16,7 +16,10 @@ interface IGift extends mongoose.Document {
   expiresAt?: Date;
   password?: string;
   hasPassword: boolean;
-  checkPassword(candidatePassword: string, userPassword: string): Promise<boolean>;
+  checkPassword(
+    candidatePassword: string,
+    userPassword: string
+  ): Promise<boolean>;
 }
 
 const giftSchema = new mongoose.Schema(
@@ -47,7 +50,17 @@ const giftSchema = new mongoose.Schema(
     theme: {
       type: String,
       required: [true, "A gift must have a theme"],
-      enum: ["romantic", "funny", "friendly", "cute", "elegant"],
+      enum: [
+        "romantic",
+        "tech-love",
+        "tech-romantic",
+        "cute-tech",
+        "cute",
+        "poetic",
+        "classic-romantic",
+        "playful-tech",
+        "elegant",
+      ],
     },
     imageUrl: {
       type: String,

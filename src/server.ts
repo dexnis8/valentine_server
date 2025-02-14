@@ -130,8 +130,8 @@ connectDB().then(() => {
 
   // Handle unhandled promise rejections
   process.on("unhandledRejection", (err) => {
-    console.error("UNHANDLED REJECTION! 💥 Shutting down...");
-    console.error(err);
+    console.log("UNHANDLED REJECTION! 💥 Shutting down...");
+    // console.error(err);
     server.close(() => {
       process.exit(1);
     });

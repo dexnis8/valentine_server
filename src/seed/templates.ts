@@ -137,7 +137,7 @@ const templates = [
   },
   {
     message: "Forever isn't long enough when I'm with you 💕",
-    theme: "classic-romantic",
+    theme: "romantic",
     imageUrl:
       "https://res.cloudinary.com/docfy0nxa/image/upload/v1739479306/tbp_files/otg3k7oprldhhczztgw5.jpg",
     isActive: true,
@@ -186,7 +186,7 @@ const templates = [
   },
   {
     message: "You're the first thing I think of each morning 🌅",
-    theme: "classic-romantic",
+    theme: "romantic",
     imageUrl: "https://images.unsplash.com/photo-1514222134-b57cbb8ce073?w=500",
     isActive: true,
   },
