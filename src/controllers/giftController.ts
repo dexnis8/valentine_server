@@ -127,3 +127,92 @@ export const markGiftAsOpened = async (
     next(error);
   }
 };
+
+// Get all templates
+export const getTemplates = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const templates = await Template.find({ isActive: true }).sort(
+      "-createdAt"
+    );
+    res.status(200).json({
+      status: "success",
+      data: templates,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get template by ID
+export const getTemplate = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const template = await Template.findById(req.params.id);
+    if (!template) {
+      next(new AppError("Template not found", 404));
+      return;
+    }
+    res.status(200).json({
+      status: "success",
+      data: template,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Update a gift
+export const updateGift = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const gift = await Gift.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!gift) {
+      next(new AppError("Gift not found", 404));
+      return;
+    }
+
+    res.status(200).json({
+      status: "success",
+      data: gift,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Delete a gift
+export const deleteGift = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const gift = await Gift.findByIdAndDelete(req.params.id);
+
+    if (!gift) {
+      next(new AppError("Gift not found", 404));
+      return;
+    }
+
+    res.status(204).json({
+      status: "success",
+      data: null,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

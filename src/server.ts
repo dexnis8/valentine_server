@@ -7,7 +7,6 @@ import { errorHandler } from "./middleware/errorHandler";
 import giftRoutes from "./routes/giftRoutes";
 import templateRoutes from "./routes/templateRoutes";
 import {
-  limiter,
   sanitizeData,
   validateContentType,
   requestSizeLimiter,

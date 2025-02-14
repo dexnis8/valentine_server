@@ -64,12 +64,12 @@ export const createGiftValidation = [
       }
       return true;
     }),
-  validateRequest
+  validateRequest,
 ];
 
 export const getGiftValidation = [
   param("id").isMongoId().withMessage("Invalid gift ID format"),
-  validateRequest
+  validateRequest,
 ];
 
 export const createTemplateValidation = [
@@ -91,7 +91,7 @@ export const createTemplateValidation = [
       "poetic",
       "classic-romantic",
       "playful-tech",
-      "elegant"
+      "elegant",
     ])
     .withMessage("Invalid theme"),
   body("imageUrl")
@@ -99,5 +99,47 @@ export const createTemplateValidation = [
     .withMessage("Image URL is required")
     .isURL()
     .withMessage("Invalid image URL"),
-  validateRequest
+  validateRequest,
+];
+
+// Update gift validation
+export const updateGiftValidation = [
+  param("id").isMongoId().withMessage("Invalid gift ID"),
+  body("message")
+    .optional()
+    .isString()
+    .trim()
+    .isLength({ min: 1, max: 500 })
+    .withMessage("Message must be between 1 and 500 characters"),
+  body("templateId").optional().isMongoId().withMessage("Invalid template ID"),
+  body("password")
+    .optional()
+    .isString()
+    .isLength({ min: 4, max: 20 })
+    .withMessage("Password must be between 4 and 20 characters"),
+  (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        status: "error",
+        errors: errors.array(),
+      });
+    }
+    next();
+  },
+];
+
+// Delete gift validation
+export const deleteGiftValidation = [
+  param("id").isMongoId().withMessage("Invalid gift ID"),
+  (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        status: "error",
+        errors: errors.array(),
+      });
+    }
+    next();
+  },
 ];
